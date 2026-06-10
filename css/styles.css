@@ -1,0 +1,154 @@
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: #f4f6f9;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #1e293b;
+  color: #fff;
+  flex-wrap: wrap;
+}
+
+.brand { font-size: 16px; display: flex; align-items: baseline; gap: 8px; }
+.brand span { font-size: 12px; color: #94a3b8; }
+
+.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+button {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #1f2937;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+button:hover { background: #eef2f7; }
+button.primary {
+  background: #16a34a;
+  border-color: #15803d;
+  color: #fff;
+  font-weight: 600;
+}
+button.primary:hover { background: #15803d; }
+
+#tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 0;
+  background: #e8edf3;
+  border-bottom: 1px solid #d4dbe4;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 5px 12px;
+  border: 1px solid #d4dbe4;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: #f1f4f8;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+}
+.tab.on { background: #fff; font-weight: 600; }
+.tabdel { color: #b91c1c; cursor: pointer; padding: 0 2px; }
+#tabAdd { border-radius: 8px 8px 0 0; border-bottom: none; }
+
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border-bottom: 1px solid #d4dbe4;
+  flex-wrap: wrap;
+}
+#toolbar .hint { color: #64748b; }
+#toolbar .sep { width: 1px; height: 22px; background: #d4dbe4; margin: 0 6px; }
+#toolbar .spacer { flex: 1; }
+#toolbar label { display: inline-flex; align-items: center; gap: 4px; color: #475569; }
+#toolbar input[type="number"] { width: 3.6em; }
+#props { display: inline-flex; align-items: center; gap: 8px; }
+#props .muted { color: #94a3b8; font-size: 13px; }
+
+#canvasWrap {
+  flex: 1;
+  overflow: auto;
+  background: #dde3ea;
+  padding: 14px;
+}
+#canvasInner {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .15);
+}
+
+footer {
+  padding: 6px 14px;
+  background: #1e293b;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+/* ----- elements del llenç ----- */
+
+.node { cursor: grab; }
+.node.sel > ellipse, .node.sel > rect:not(.handle), .node.sel > polygon,
+.node.sel > path, .node.sel > circle:not(.port) {
+  filter: drop-shadow(0 0 4px rgba(37, 99, 235, .8));
+}
+
+.ntext {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.25;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.port { fill: #2563eb; stroke: #fff; stroke-width: 1.5; cursor: crosshair; }
+.port:hover { fill: #1d4ed8; r: 8; }
+.handle { fill: #fff; stroke: #2563eb; stroke-width: 1.5; cursor: nwse-resize; }
+
+.edge .line { fill: none; stroke: #2f5597; stroke-width: 2; pointer-events: none; }
+.edge .hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.edge.sel .line { stroke: #dc2626; stroke-width: 3; }
+
+.elabel rect { fill: #fff; stroke: #d4dbe4; }
+.elabel text { font-size: 12px; font-weight: 600; fill: #1f2937; cursor: pointer; }
+
+#tempEdge { fill: none; stroke: #2563eb; stroke-width: 2; stroke-dasharray: 6 4; pointer-events: none; }
+
+#editor {
+  position: absolute;
+  border: 2px solid #2563eb;
+  border-radius: 4px;
+  padding: 6px;
+  font-family: inherit;
+  line-height: 1.25;
+  text-align: center;
+  resize: none;
+  z-index: 10;
+  background: #fff;
+}

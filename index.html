@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IsaacFlux · Editor de diagrames de flux</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+  <div class="brand">📊 <strong>IsaacFlux</strong><span>Diagrames de flux dels processos de l'institut</span></div>
+  <div class="actions">
+    <button id="btnXlsx" class="primary">⬇ Exporta a Excel (.xlsx)</button>
+    <button id="btnJsonExport">Desa JSON</button>
+    <button id="btnJsonImport">Obre JSON</button>
+    <button id="btnExample">Afegeix l'exemple Alexia</button>
+    <input type="file" id="fileJson" accept=".json,application/json" hidden>
+  </div>
+</header>
+<nav id="tabs"></nav>
+<div id="toolbar">
+  <span class="hint">Afegeix:</span>
+  <button data-add="inici" title="Inici del procés">⬭ Inici</button>
+  <button data-add="proces" title="Pas o acció">▭ Procés</button>
+  <button data-add="decisio" title="Pregunta amb branques Sí/No">◇ Decisió</button>
+  <button data-add="document" title="Document o registre">🗎 Document</button>
+  <button data-add="connector" title="Connector entre parts del diagrama">○ Connector</button>
+  <button data-add="fi" title="Final del procés">⬭ Fi</button>
+  <button data-add="nota" title="Quadre de text lliure">🗒 Nota</button>
+  <span class="sep"></span>
+  <span id="props"></span>
+  <span class="spacer"></span>
+  <label class="zoom">Zoom
+    <select id="zoom">
+      <option value="50">50%</option>
+      <option value="75">75%</option>
+      <option value="100" selected>100%</option>
+      <option value="125">125%</option>
+      <option value="150">150%</option>
+    </select>
+  </label>
+</div>
+<div id="canvasWrap"><div id="canvasInner"></div></div>
+<footer>
+  Arrossega les figures per moure-les · Doble clic per editar el text ·
+  Amb una figura seleccionada, arrossega un punt blau fins a una altra figura per connectar-les ·
+  Doble clic sobre una fletxa per posar-hi «Sí»/«No» · Tecla Supr per eliminar
+</footer>
+<script src="js/zip.js"></script>
+<script src="js/routing.js"></script>
+<script src="js/xlsx-export.js"></script>
+<script src="js/exemple-alexia.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
