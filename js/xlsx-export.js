@@ -88,51 +88,44 @@
       `</xdr:sp><xdr:clientData/></xdr:twoCellAnchor>`;
   }
 
-  /* Conversió de la ruta de la fletxa a un connector DrawingML.
-     L'Excel només té connectors acodats H-V-H (bentConnector2/3): per
-     obtenir-ne un de V-H-V cal girar la forma 90° (rot=5400000) amb la
-     caixa pre-rotació centrada al mateix punt i les mides intercanviades. */
-  function cxnSp(id, route, srcId, srcPreset, dstId, dstPreset) {
+  /* Conversió de la ruta de la fletxa a connectors DrawingML.
+     Les fletxes acodades s'exporten com a segments rectes consecutius
+     (straightConnector1) en lloc de bentConnector girat 90°: els connectors
+     amb rotació es mostren malament al Google Sheets (Drive), mentre que
+     els segments rectes amb flips es veuen bé a tot arreu (Excel, Google
+     Sheets i LibreOffice). La punta de fletxa va a l'últim segment. */
+  function edgeCxns(startId, route, srcId, srcPreset, dstId, dstPreset) {
     const pts = route.pts;
-    const [x1, y1] = pts[0];
-    const [x2, y2] = pts[pts.length - 1];
-    const minx = Math.min(x1, x2), miny = Math.min(y1, y2);
-    const adx = Math.abs(x2 - x1), ady = Math.abs(y2 - y1);
-
-    let prst, rot = 0, flipH = false, flipV = false, off, ext;
-    if (route.kind === 'straight') {
-      prst = 'straightConnector1';
-      off = [minx, miny]; ext = [adx, ady];
-      flipH = x2 < x1; flipV = y2 < y1;
-    } else if (route.kind === 'hvh' || route.kind === 'hv') {
-      prst = route.kind === 'hvh' ? 'bentConnector3' : 'bentConnector2';
-      off = [minx, miny]; ext = [adx, ady];
-      flipH = x2 < x1; flipV = y2 < y1;
-    } else { // 'vh' i 'vhv': connector girat 90°
-      prst = route.kind === 'vhv' ? 'bentConnector3' : 'bentConnector2';
-      rot = 5400000;
-      const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
-      ext = [ady, adx];
-      off = [cx - ady / 2, cy - adx / 2];
-      flipV = x1 < x2;
-      flipH = y1 > y2;
+    const segs = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[i + 1];
+      if (Math.abs(x2 - x1) < 0.5 && Math.abs(y2 - y1) < 0.5) continue;
+      segs.push([x1, y1, x2, y2]);
     }
+    if (!segs.length) return { xml: '', count: 0 };
 
-    const av = prst === 'bentConnector3' ? '<a:gd name="adj1" fmla="val 50000"/>' : '';
-    const st = srcId && srcPreset !== 'ellipse' ? `<a:stCxn id="${srcId}" idx="${CXN_IDX[route.s]}"/>` : '';
-    const en = dstId && dstPreset !== 'ellipse' ? `<a:endCxn id="${dstId}" idx="${CXN_IDX[route.t]}"/>` : '';
-    const attrs = (rot ? ` rot="${rot}"` : '') + (flipH ? ' flipH="1"' : '') + (flipV ? ' flipV="1"' : '');
-
-    // Àncora amb la caixa VISUAL del connector; el rectangle de pre-rotació
-    // va a l'a:xfrm (és exactament el que escriu l'Excel als seus fitxers).
-    return `<xdr:twoCellAnchor>${anchorXml(minx, miny, adx, ady)}` +
-      `<xdr:cxnSp macro=""><xdr:nvCxnSpPr><xdr:cNvPr id="${id}" name="Connector ${id}"/><xdr:cNvCxnSpPr>${st}${en}</xdr:cNvCxnSpPr></xdr:nvCxnSpPr>` +
-      `<xdr:spPr><a:xfrm${attrs}><a:off x="${emu(off[0])}" y="${emu(off[1])}"/><a:ext cx="${emu(ext[0])}" cy="${emu(ext[1])}"/></a:xfrm>` +
-      `<a:prstGeom prst="${prst}"><a:avLst>${av}</a:avLst></a:prstGeom>` +
-      `<a:ln w="19050"><a:tailEnd type="triangle" w="lg" len="lg"/></a:ln></xdr:spPr>` +
-      `<xdr:style><a:lnRef idx="2"><a:schemeClr val="accent1"/></a:lnRef><a:fillRef idx="0"><a:schemeClr val="accent1"/></a:fillRef>` +
-      `<a:effectRef idx="1"><a:schemeClr val="accent1"/></a:effectRef><a:fontRef idx="minor"><a:schemeClr val="tx1"/></a:fontRef></xdr:style>` +
-      `</xdr:cxnSp><xdr:clientData/></xdr:twoCellAnchor>`;
+    let xml = '';
+    segs.forEach((seg, i) => {
+      const [x1, y1, x2, y2] = seg;
+      const last = i === segs.length - 1;
+      const minx = Math.min(x1, x2), miny = Math.min(y1, y2);
+      const adx = Math.abs(x2 - x1), ady = Math.abs(y2 - y1);
+      const flipH = x2 < x1, flipV = y2 < y1;
+      const attrs = (flipH ? ' flipH="1"' : '') + (flipV ? ' flipV="1"' : '');
+      const st = i === 0 && srcId && srcPreset !== 'ellipse' ? `<a:stCxn id="${srcId}" idx="${CXN_IDX[route.s]}"/>` : '';
+      const en = last && dstId && dstPreset !== 'ellipse' ? `<a:endCxn id="${dstId}" idx="${CXN_IDX[route.t]}"/>` : '';
+      const arrow = last ? '<a:tailEnd type="triangle" w="lg" len="lg"/>' : '';
+      xml += `<xdr:twoCellAnchor>${anchorXml(minx, miny, adx, ady)}` +
+        `<xdr:cxnSp macro=""><xdr:nvCxnSpPr><xdr:cNvPr id="${startId + i}" name="Connector ${startId + i}"/><xdr:cNvCxnSpPr>${st}${en}</xdr:cNvCxnSpPr></xdr:nvCxnSpPr>` +
+        `<xdr:spPr><a:xfrm${attrs}><a:off x="${emu(minx)}" y="${emu(miny)}"/><a:ext cx="${emu(adx)}" cy="${emu(ady)}"/></a:xfrm>` +
+        `<a:prstGeom prst="straightConnector1"><a:avLst/></a:prstGeom>` +
+        `<a:ln w="19050">${arrow}</a:ln></xdr:spPr>` +
+        `<xdr:style><a:lnRef idx="2"><a:schemeClr val="accent1"/></a:lnRef><a:fillRef idx="0"><a:schemeClr val="accent1"/></a:fillRef>` +
+        `<a:effectRef idx="1"><a:schemeClr val="accent1"/></a:effectRef><a:fontRef idx="minor"><a:schemeClr val="tx1"/></a:fontRef></xdr:style>` +
+        `</xdr:cxnSp><xdr:clientData/></xdr:twoCellAnchor>`;
+    });
+    return { xml, count: segs.length };
   }
 
   function labelSp(id, text, pos) {
@@ -157,7 +150,9 @@
       const t = d.nodes.find(n => n.id === e.to);
       if (!s || !t) continue;
       const route = global.IsaacFluxRouting.routeEdge(s, t);
-      xml += cxnSp(id++, route, map[s.id], PRESET[s.type], map[t.id], PRESET[t.type]);
+      const cxns = edgeCxns(id, route, map[s.id], PRESET[s.type], map[t.id], PRESET[t.type]);
+      xml += cxns.xml;
+      id += cxns.count;
       if (e.label) xml += labelSp(id++, e.label, global.IsaacFluxRouting.labelPos(route.pts));
     }
     return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n` +
