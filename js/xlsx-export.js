@@ -24,12 +24,17 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const emu = px => Math.round(px * PX_EMU);
 
+  // Àncora de dues cel·les amb la caixa VISUAL de la forma (la mateixa
+  // convenció que escriu l'Excel; per a formes girades, el rectangle de
+  // pre-rotació va dins de l'a:xfrm).
   function anchorXml(x, y, w, h) {
-    const col = Math.max(0, Math.floor(x / COLW));
-    const row = Math.max(0, Math.floor(y / ROWH));
-    return `<xdr:from><xdr:col>${col}</xdr:col><xdr:colOff>${emu(x - col * COLW)}</xdr:colOff>` +
-      `<xdr:row>${row}</xdr:row><xdr:rowOff>${emu(y - row * ROWH)}</xdr:rowOff></xdr:from>` +
-      `<xdr:ext cx="${emu(w)}" cy="${emu(h)}"/>`;
+    const corner = (px, py, tag) => {
+      const col = Math.max(0, Math.floor(px / COLW));
+      const row = Math.max(0, Math.floor(py / ROWH));
+      return `<xdr:${tag}><xdr:col>${col}</xdr:col><xdr:colOff>${emu(px - col * COLW)}</xdr:colOff>` +
+        `<xdr:row>${row}</xdr:row><xdr:rowOff>${emu(py - row * ROWH)}</xdr:rowOff></xdr:${tag}>`;
+    };
+    return corner(x, y, 'from') + corner(x + w, y + h, 'to');
   }
 
   function txBody(text, sz, opts) {
@@ -64,23 +69,23 @@
     const xfrm = `<a:xfrm><a:off x="${emu(node.x)}" y="${emu(node.y)}"/><a:ext cx="${emu(node.w)}" cy="${emu(node.h)}"/></a:xfrm>`;
 
     if (node.type === 'nota') {
-      return `<xdr:oneCellAnchor>${anchorXml(node.x, node.y, node.w, node.h)}` +
+      return `<xdr:twoCellAnchor>${anchorXml(node.x, node.y, node.w, node.h)}` +
         `<xdr:sp macro="" textlink=""><xdr:nvSpPr><xdr:cNvPr id="${id}" name="Nota ${id}"/><xdr:cNvSpPr txBox="1"/></xdr:nvSpPr>` +
         `<xdr:spPr>${xfrm}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>` +
         `<a:solidFill><a:schemeClr val="lt1"/></a:solidFill>` +
         `<a:ln w="9525" cmpd="sng"><a:solidFill><a:schemeClr val="tx1"><a:alpha val="40000"/></a:schemeClr></a:solidFill></a:ln></xdr:spPr>` +
         plainStyle + txBody(node.text, sz, { anchor: 't', algn: 'l', dark: true }) +
-        `</xdr:sp><xdr:clientData/></xdr:oneCellAnchor>`;
+        `</xdr:sp><xdr:clientData/></xdr:twoCellAnchor>`;
     }
 
     const preset = PRESET[node.type] || 'rect';
     const accent = node.accent || DEF_ACCENT[node.type] || 'accent1';
     const bold = node.type === 'inici' || node.type === 'fi';
-    return `<xdr:oneCellAnchor>${anchorXml(node.x, node.y, node.w, node.h)}` +
+    return `<xdr:twoCellAnchor>${anchorXml(node.x, node.y, node.w, node.h)}` +
       `<xdr:sp macro="" textlink=""><xdr:nvSpPr><xdr:cNvPr id="${id}" name="${esc(node.type)} ${id}"/><xdr:cNvSpPr/></xdr:nvSpPr>` +
       `<xdr:spPr>${xfrm}<a:prstGeom prst="${preset}"><a:avLst/></a:prstGeom></xdr:spPr>` +
       shapeStyle(accent) + txBody(node.text, sz, { bold }) +
-      `</xdr:sp><xdr:clientData/></xdr:oneCellAnchor>`;
+      `</xdr:sp><xdr:clientData/></xdr:twoCellAnchor>`;
   }
 
   /* Conversió de la ruta de la fletxa a un connector DrawingML.
@@ -118,26 +123,28 @@
     const en = dstId && dstPreset !== 'ellipse' ? `<a:endCxn id="${dstId}" idx="${CXN_IDX[route.t]}"/>` : '';
     const attrs = (rot ? ` rot="${rot}"` : '') + (flipH ? ' flipH="1"' : '') + (flipV ? ' flipV="1"' : '');
 
-    return `<xdr:oneCellAnchor>${anchorXml(minx, miny, adx, ady)}` +
+    // Àncora amb la caixa VISUAL del connector; el rectangle de pre-rotació
+    // va a l'a:xfrm (és exactament el que escriu l'Excel als seus fitxers).
+    return `<xdr:twoCellAnchor>${anchorXml(minx, miny, adx, ady)}` +
       `<xdr:cxnSp macro=""><xdr:nvCxnSpPr><xdr:cNvPr id="${id}" name="Connector ${id}"/><xdr:cNvCxnSpPr>${st}${en}</xdr:cNvCxnSpPr></xdr:nvCxnSpPr>` +
       `<xdr:spPr><a:xfrm${attrs}><a:off x="${emu(off[0])}" y="${emu(off[1])}"/><a:ext cx="${emu(ext[0])}" cy="${emu(ext[1])}"/></a:xfrm>` +
       `<a:prstGeom prst="${prst}"><a:avLst>${av}</a:avLst></a:prstGeom>` +
-      `<a:ln><a:tailEnd type="triangle"/></a:ln></xdr:spPr>` +
+      `<a:ln w="19050"><a:tailEnd type="triangle" w="lg" len="lg"/></a:ln></xdr:spPr>` +
       `<xdr:style><a:lnRef idx="2"><a:schemeClr val="accent1"/></a:lnRef><a:fillRef idx="0"><a:schemeClr val="accent1"/></a:fillRef>` +
       `<a:effectRef idx="1"><a:schemeClr val="accent1"/></a:effectRef><a:fontRef idx="minor"><a:schemeClr val="tx1"/></a:fontRef></xdr:style>` +
-      `</xdr:cxnSp><xdr:clientData/></xdr:oneCellAnchor>`;
+      `</xdr:cxnSp><xdr:clientData/></xdr:twoCellAnchor>`;
   }
 
   function labelSp(id, text, pos) {
     const w = text.length * 12 + 24, h = 24;
     const x = pos[0] - 4, y = pos[1] - 14;
-    return `<xdr:oneCellAnchor>${anchorXml(x, y, w, h)}` +
+    return `<xdr:twoCellAnchor>${anchorXml(x, y, w, h)}` +
       `<xdr:sp macro="" textlink=""><xdr:nvSpPr><xdr:cNvPr id="${id}" name="Etiqueta ${id}"/><xdr:cNvSpPr txBox="1"/></xdr:nvSpPr>` +
       `<xdr:spPr><a:xfrm><a:off x="${emu(x)}" y="${emu(y)}"/><a:ext cx="${emu(w)}" cy="${emu(h)}"/></a:xfrm>` +
       `<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>` +
       `<a:solidFill><a:schemeClr val="lt1"/></a:solidFill><a:ln w="9525" cmpd="sng"><a:noFill/></a:ln></xdr:spPr>` +
       plainStyle + txBody(text, 1000, { anchor: 't', algn: 'l', dark: true, bold: true, wrap: 'none' }) +
-      `</xdr:sp><xdr:clientData/></xdr:oneCellAnchor>`;
+      `</xdr:sp><xdr:clientData/></xdr:twoCellAnchor>`;
   }
 
   function drawingXml(d) {

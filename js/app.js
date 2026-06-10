@@ -136,7 +136,7 @@
 
     inner.innerHTML = `<svg id="svg" viewBox="0 0 ${CANVAS_W} ${CANVAS_H}" width="${CANVAS_W * zoom}" height="${CANVAS_H * zoom}" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f5597"/></marker>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f5597"/></marker>
         <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#eef1f5" stroke-width="1"/></pattern>
       </defs>
       <rect width="${CANVAS_W}" height="${CANVAS_H}" fill="url(#grid)"/>

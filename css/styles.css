@@ -131,7 +131,7 @@ footer {
 .port:hover { fill: #1d4ed8; r: 8; }
 .handle { fill: #fff; stroke: #2563eb; stroke-width: 1.5; cursor: nwse-resize; }
 
-.edge .line { fill: none; stroke: #2f5597; stroke-width: 2; pointer-events: none; }
+.edge .line { fill: none; stroke: #2f5597; stroke-width: 2.5; pointer-events: none; }
 .edge .hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
 .edge.sel .line { stroke: #dc2626; stroke-width: 3; }
 
