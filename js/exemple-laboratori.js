@@ -1,0 +1,80 @@
+/* Diagrama d'exemple: «Com hem de treballar quan entrem al laboratori químic»,
+   elaborat a partir de la Instrucció de treball de seguretat al laboratori
+   (17 passos + les 5 preguntes finals). */
+(function (global) {
+  'use strict';
+
+  global.IsaacFluxLaboratori = function () {
+    return {
+      id: 'exemple-laboratori',
+      name: 'Laboratori químic',
+      nodes: [
+        { id: 'l01', type: 'inici', x: 360, y: 20, w: 300, h: 64, text: "INICI\nAbans d'entrar al laboratori químic", fontSize: 13 },
+        { id: 'l02', type: 'proces', x: 360, y: 124, w: 300, h: 120, text: "PAS 1. Conèixer l'activitat: quina pràctica, quins productes i equips, quins riscos comporta, quines mesures preventives i què fer en cas d'emergència", fontSize: 12 },
+        { id: 'l03', type: 'decisio', x: 350, y: 284, w: 320, h: 150, text: "Coneixem l'activitat i hem valorat els riscos?", fontSize: 13 },
+        { id: 'l04', type: 'proces', x: 780, y: 300, w: 320, h: 120, accent: 'accent2', text: "Atura't. Mai s'ha d'improvisar una pràctica ni modificar un procediment sense haver valorat abans els riscos", fontSize: 12 },
+        { id: 'l05', type: 'proces', x: 360, y: 474, w: 300, h: 100, text: 'PAS 2. Revisar la documentació i identificar perills químics, EPIs, incompatibilitats, gestió de residus i emergències', fontSize: 12 },
+        { id: 'l06', type: 'document', x: 30, y: 474, w: 300, h: 110, text: 'Procediment i PNT · Fitxes de Dades de Seguretat (FDS) · Instruccions dels equips · Normes del laboratori', fontSize: 12 },
+        { id: 'l07', type: 'proces', x: 360, y: 614, w: 300, h: 120, text: 'PAS 3. Preparar-se: bata, calçat tancat, cabells recollits i ulleres de seguretat; guants, pantalla facial i protecció respiratòria segons la FDS (secció 8)', fontSize: 12 },
+        { id: 'l08', type: 'proces', x: 360, y: 774, w: 300, h: 110, text: "PAS 4. Comprovar la zona: bancada neta i ordenada, campana operativa, extintors, dutxa i rentaülls i sortides d'emergència accessibles", fontSize: 12 },
+        { id: 'l09', type: 'decisio', x: 350, y: 924, w: 320, h: 150, text: "La zona és neta, ordenada i amb els mitjans d'emergència accessibles?", fontSize: 12 },
+        { id: 'l10', type: 'proces', x: 780, y: 940, w: 300, h: 100, accent: 'accent2', text: 'Condicionar i ordenar la zona abans de començar', fontSize: 13 },
+        { id: 'l11', type: 'proces', x: 360, y: 1114, w: 300, h: 110, text: 'PAS 5. Identificar els productes: nom complet, concentració, pictogrames CLP, frases H i P i estat de l\'envàs', fontSize: 12 },
+        { id: 'l12', type: 'decisio', x: 350, y: 1264, w: 320, h: 150, text: "L'envàs està correctament identificat?", fontSize: 13 },
+        { id: 'l13', type: 'fi', x: 780, y: 1280, w: 320, h: 120, accent: 'accent2', text: "ATURA. No utilitzar productes sense etiqueta, amb etiqueta deteriorada o de contingut desconegut", fontSize: 12 },
+        { id: 'l14', type: 'proces', x: 360, y: 1454, w: 300, h: 100, text: 'PAS 6. Consultar la FDS, sobretot en productes desconeguts o especialment perillosos', fontSize: 12 },
+        { id: 'l15', type: 'document', x: 30, y: 1454, w: 300, h: 120, text: 'FDS · Seccions clau: 2 perills · 4 primers auxilis · 5 incendis · 7 manipulació · 8 EPIs · 10 reactivitat · 13 residus', fontSize: 11 },
+        { id: 'l16', type: 'decisio', x: 350, y: 1594, w: 320, h: 160, text: 'Hi ha incompatibilitats entre els productes?', fontSize: 13 },
+        { id: 'l17', type: 'proces', x: 780, y: 1614, w: 320, h: 120, accent: 'accent2', text: 'Segregar els productes i no barrejar-los (àcids+bases, lleixiu+àcids o amoníac, comburents+inflamables…)', fontSize: 12 },
+        { id: 'l18', type: 'proces', x: 360, y: 1794, w: 300, h: 120, text: "PAS 8. Transvasaments: verificar producte i concentració, preparar recipient i etiqueta; evitar esquitxades, usar embut o campana i subjectar l'ampolla pel cos", fontSize: 12 },
+        { id: 'l19', type: 'proces', x: 360, y: 1954, w: 300, h: 110, text: 'PAS 9. Etiquetar els recipients secundaris: nom, fórmula química, concentració, pictogrames CLP, data i responsable', fontSize: 12 },
+        { id: 'l20', type: 'proces', x: 360, y: 2104, w: 300, h: 120, text: "PAS 10. Productes inflamables: retirar focus d'ignició i flames i ventilar; mínima quantitat i recipients tancats. El risc principal són els vapors", fontSize: 12 },
+        { id: 'l21', type: 'proces', x: 360, y: 2264, w: 300, h: 110, text: "PAS 11. Campanes extractores: pantalla abaixada i treballar-hi dins; no ficar-hi el cap, no usar-la de magatzem ni bloquejar les reixetes", fontSize: 12 },
+        { id: 'l22', type: 'proces', x: 360, y: 2414, w: 300, h: 100, text: 'PAS 12. Equips: usar-los només en bon estat, amb formació, amb PNT i coneixent-ne el funcionament', fontSize: 12 },
+        { id: 'l23', type: 'proces', x: 360, y: 2554, w: 300, h: 110, text: "PAS 13. Equips d'alta temperatura (mufles, estufes, plaques): comprovar temperatura i ventilació, retirar inflamables i usar guants tèrmics", fontSize: 12 },
+        { id: 'l24', type: 'proces', x: 360, y: 2704, w: 300, h: 110, text: 'PAS 14. Gestionar els residus: recipients adequats i etiquetats, tancats, sense barrejar incompatibles ni omplir-los massa', fontSize: 12 },
+        { id: 'l25', type: 'proces', x: 360, y: 2864, w: 300, h: 120, text: 'PAS 15. Actitud preventiva: no menjar, beure ni pipetejar amb la boca; no deixar reaccions sense vigilància i comunicar qualsevol incidència', fontSize: 12 },
+        { id: 'l26', type: 'decisio', x: 350, y: 3024, w: 320, h: 150, text: 'Es produeix un vessament o incident?', fontSize: 13 },
+        { id: 'l27', type: 'proces', x: 760, y: 3000, w: 340, h: 210, accent: 'accent2', text: "PAS 16. Actuar: aturar, avisar les persones properes, identificar el producte, consultar la FDS, delimitar la zona, posar-se els EPIs, neutralitzar o absorbir si és segur, gestionar el residu i comunicar. Mai intervenir sobre un producte desconegut", fontSize: 12 },
+        { id: 'l28', type: 'proces', x: 360, y: 3214, w: 300, h: 120, text: 'PAS 17. Deixar el laboratori segur: productes i gasos tancats, residus gestionats, campanes i bancades netes, equips apagats i incidències comunicades', fontSize: 12 },
+        { id: 'l29', type: 'nota', x: 30, y: 3214, w: 300, h: 190, text: "Les 5 preguntes finals:\n1) Què estic utilitzant?\n2) Quin risc té?\n3) Com em protegeixo?\n4) Què faig si hi ha una emergència?\n5) On gestiono el residu?\nSi no les pots respondre, encara no estàs preparat per començar.", fontSize: 12 },
+        { id: 'l30', type: 'fi', x: 360, y: 3374, w: 300, h: 72, text: "FI\nLaboratori preparat perquè qualsevol pugui treballar-hi amb seguretat", fontSize: 12 },
+        { id: 'l31', type: 'nota', x: 900, y: 20, w: 320, h: 110, text: "Basat en la Instrucció de treball «Com hem de treballar quan entrem al laboratori químic».", fontSize: 12 }
+      ],
+      edges: [
+        { id: 'le01', from: 'l01', to: 'l02', label: '' },
+        { id: 'le02', from: 'l02', to: 'l03', label: '' },
+        { id: 'le03', from: 'l03', to: 'l05', label: 'Sí' },
+        { id: 'le04', from: 'l03', to: 'l04', label: 'No' },
+        { id: 'le05', from: 'l04', to: 'l05', label: '' },
+        { id: 'le06', from: 'l06', to: 'l05', label: '' },
+        { id: 'le07', from: 'l05', to: 'l07', label: '' },
+        { id: 'le08', from: 'l07', to: 'l08', label: '' },
+        { id: 'le09', from: 'l08', to: 'l09', label: '' },
+        { id: 'le10', from: 'l09', to: 'l11', label: 'Sí' },
+        { id: 'le11', from: 'l09', to: 'l10', label: 'No' },
+        { id: 'le12', from: 'l10', to: 'l08', label: '' },
+        { id: 'le13', from: 'l11', to: 'l12', label: '' },
+        { id: 'le14', from: 'l12', to: 'l14', label: 'Sí' },
+        { id: 'le15', from: 'l12', to: 'l13', label: 'No' },
+        { id: 'le16', from: 'l15', to: 'l14', label: '' },
+        { id: 'le17', from: 'l14', to: 'l16', label: '' },
+        { id: 'le18', from: 'l16', to: 'l18', label: 'No' },
+        { id: 'le19', from: 'l16', to: 'l17', label: 'Sí' },
+        { id: 'le20', from: 'l17', to: 'l18', label: '' },
+        { id: 'le21', from: 'l18', to: 'l19', label: '' },
+        { id: 'le22', from: 'l19', to: 'l20', label: '' },
+        { id: 'le23', from: 'l20', to: 'l21', label: '' },
+        { id: 'le24', from: 'l21', to: 'l22', label: '' },
+        { id: 'le25', from: 'l22', to: 'l23', label: '' },
+        { id: 'le26', from: 'l23', to: 'l24', label: '' },
+        { id: 'le27', from: 'l24', to: 'l25', label: '' },
+        { id: 'le28', from: 'l25', to: 'l26', label: '' },
+        { id: 'le29', from: 'l26', to: 'l28', label: 'No' },
+        { id: 'le30', from: 'l26', to: 'l27', label: 'Sí' },
+        { id: 'le31', from: 'l27', to: 'l28', label: '' },
+        { id: 'le32', from: 'l28', to: 'l30', label: '' }
+      ]
+    };
+  };
+})(typeof globalThis !== 'undefined' ? globalThis : window);

@@ -3,7 +3,7 @@
   'use strict';
 
   const LS_KEY = 'isaacflux-v1';
-  const CANVAS_W = 1500, CANVAS_H = 2100;
+  const MIN_W = 1200, MIN_H = 1400, MARGIN = 120;
   const ACCENTS = {
     accent1: '#4472C4', accent2: '#ED7D31', accent3: '#A5A5A5',
     accent4: '#FFC000', accent5: '#5B9BD5', accent6: '#70AD47'
@@ -45,8 +45,8 @@
         const st = JSON.parse(raw);
         if (st && Array.isArray(st.diagrams) && st.diagrams.length) return st;
       }
-    } catch (e) { /* dades corruptes: es torna a l'exemple */ }
-    return { diagrams: [globalThis.IsaacFluxExemple()], active: 0 };
+    } catch (e) { /* dades corruptes: es torna als exemples */ }
+    return { diagrams: [globalThis.IsaacFluxExemple(), globalThis.IsaacFluxLaboratori()], active: 0 };
   }
   function save() {
     try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) { /* sense espai */ }
@@ -99,11 +99,23 @@
   ];
   const edgePath = pts => 'M ' + pts.map(p => p.join(' ')).join(' L ');
 
+  // El llenç creix amb el contingut: així els diagrames llargs (molts passos)
+  // no queden tallats. Mai per sota d'una mida mínima còmoda.
+  function canvasSize() {
+    let w = MIN_W, h = MIN_H;
+    for (const n of diagram().nodes) {
+      w = Math.max(w, n.x + n.w + MARGIN);
+      h = Math.max(h, n.y + n.h + MARGIN);
+    }
+    return { w, h };
+  }
+
   function render() {
     if (editing) { editing = null; } // l'editor desapareix amb el redibuixat
     renderTabs();
     renderProps();
     const d = diagram();
+    const { w: CANVAS_W, h: CANVAS_H } = canvasSize();
     const inner = $('#canvasInner');
     inner.style.width = (CANVAS_W * zoom) + 'px';
     inner.style.height = (CANVAS_H * zoom) + 'px';
@@ -438,15 +450,18 @@
     e.target.value = '';
   });
 
-  $('#btnExample').addEventListener('click', () => {
-    if (!confirm("Vols afegir de nou el diagrama d'exemple «Notes a l'Alexia»?")) return;
-    const ex = globalThis.IsaacFluxExemple();
+  function addExample(factory, label) {
+    if (!confirm(`Vols afegir de nou el diagrama d'exemple «${label}»?`)) return;
+    const ex = factory();
     ex.id = uid();
     state.diagrams.push(ex);
     state.active = state.diagrams.length - 1;
     sel = null;
     save(); render();
-  });
+  }
+
+  $('#btnExample').addEventListener('click', () => addExample(globalThis.IsaacFluxExemple, "Notes a l'Alexia"));
+  $('#btnExampleLab').addEventListener('click', () => addExample(globalThis.IsaacFluxLaboratori, 'Laboratori químic'));
 
   $('#zoom').addEventListener('change', e => { zoom = (+e.target.value) / 100; render(); });
 

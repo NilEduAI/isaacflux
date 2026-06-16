@@ -7,9 +7,15 @@ diagrames que ja fa servir la coordinació pedagògica (rectangles de procés,
 rombes de decisió, el·lipses d'inici/fi, connectors amb fletxa, etiquetes
 «Sí»/«No»...).
 
-Inclou com a exemple, ja creat dins de l'app, el diagrama
-**«Com registrar les notes a l'Alexia»**, elaborat a partir del procediment
-del curs 2025-2026 (versió maig 2026).
+Inclou dos diagrames d'exemple, ja creats dins de l'app (un full per cadascun):
+
+- **«Notes a l'Alexia»** — com registrar les qualificacions a l'Alexia
+  (curs 2025-2026, versió maig 2026).
+- **«Laboratori químic»** — instrucció de treball «Com hem de treballar quan
+  entrem al laboratori químic» (17 passos de seguretat + les 5 preguntes finals).
+
+El llenç de l'editor s'ajusta automàticament a la mida del diagrama, de manera
+que els processos llargs (com el del laboratori) no queden tallats.
 
 ## Com s'obre
 
@@ -56,6 +62,7 @@ js/routing.js         Encaminament automàtic de les fletxes (compartit editor/e
 js/xlsx-export.js     Generació del .xlsx amb formes DrawingML natives
 js/zip.js             Escriptor ZIP mínim (un .xlsx és un ZIP) sense dependències
 js/exemple-alexia.js  Diagrama d'exemple «Notes a l'Alexia»
+js/exemple-laboratori.js Diagrama d'exemple «Laboratori químic»
 test/genera-xlsx.cjs  Prova: genera el .xlsx des de Node (node test/genera-xlsx.cjs)
 ```
 
